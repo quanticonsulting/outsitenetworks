@@ -33,7 +33,6 @@ function formatDate(date) {
 
 params = {
     event: 'Transaction Item',
-    event_selector : '"Other Tobacco Products" in properties["Category name"]',
     'today' : today,
     'daysago1' : daysago1,
     'daysago7' : daysago7,
@@ -53,7 +52,6 @@ function main() {
             to_date:   formatDate(params.daysago1),
             event_selectors: [{
                 event: params.event
-		//    , selector: params.event_selector
 	    }]
 	}),
         People(), {

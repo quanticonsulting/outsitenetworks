@@ -37,7 +37,6 @@ function formatDate(date) {
 
 params = {
     event: 'Transaction Item',
-    event_selector : '"Other Tobacco Products" in properties["Category name"]',
     'today' : today,
     'daysago1' : daysago1,
     'daysago7' : daysago7,
@@ -53,11 +52,10 @@ params = {
 function main() {
     return join(
 	Events({
-            from_date: formatDate(params.daysago8),
-            to_date:   formatDate(params.daysago1),
+            from_date: formatDate(params.daysago1),
+            to_date:   formatDate(params.daysago15),
             event_selectors: [{
                 event: params.event
-		, selector: params.event_selector
 	    }]
 	}),
         People(), {
@@ -68,10 +66,9 @@ function main() {
         })
         .filter(function(tuple) {
             var trans_date = new Date(tuple.event.properties["Transaction date time"]);
-            return (formatDate(trans_date) == formatDate(params.daysago1) || 
-		    formatDate(trans_date) == formatDate(params.daysago8)) &&
+            return (formatDate(trans_date) >= formatDate(params.daysago1) || 
+		    formatDate(trans_date) <= formatDate(params.daysago15)) &&
 		tuple.user.properties["Consumer created"] >= params.daysago31;
-            //return tuple.user.properties["Consumer created"] >= params.daysago31;
 	})
 	.groupByUser([function(u) { return u.event.properties["Place name"]}
 		      , function(u) { return u.event.properties["Place market"]}
@@ -83,13 +80,11 @@ function main() {
 	.map(function(kv) {
 	    var start_metric = 0;
 	    var end_metric = 0;
-	    if (kv.key[4] == formatDate(params.daysago1)) {
+	    if (kv.key[4] >= formatDate(params.daysago1) && kv.key[4] <= formatDate(params.daysago8)) {
 		end_metric = kv.value;
 	    } else {
 		start_metric = kv.value;
 	    }
-	    
-	    
 	    return {
 		store : kv.key[0],
 		market : kv.key[1],
@@ -99,8 +94,7 @@ function main() {
 		num_of_loyalty_accounts_end: end_metric
 	    }
 	})
-	.groupBy(["store","market","division","region"],
-		 [mixpanel.reducer.sum('num_of_loyalty_accounts_start'),mixpanel.reducer.sum('num_of_loyalty_accounts_end')])
+	.groupBy(["store","market","division","region"],[mixpanel.reducer.sum('num_of_loyalty_accounts_start'),mixpanel.reducer.sum('num_of_loyalty_accounts_end')])
 	.map(function(keysvalues) {
 	    var growth = 100;
 	    if (keysvalues.value[0] > 0) {
