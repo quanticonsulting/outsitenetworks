@@ -35,7 +35,7 @@ function main() {
             }]
         })
         .filter(function(tuple) {
-            return typeof tuple.user.properties["Consumer token: APID"] == "undefined" || typeof tuple.user.properties["Consumer token: APID"] != "undefined";
+            return typeof tuple.user.properties["Consumer token: APID"] != "undefined";
 	})
 	.groupByUser([function(u) { return u.event.properties["Consumer ID"]}], mixpanel.reducer.count())
 	.groupBy([mixpanel.slice("key", 1)],mixpanel.reducer.sum('value'))
