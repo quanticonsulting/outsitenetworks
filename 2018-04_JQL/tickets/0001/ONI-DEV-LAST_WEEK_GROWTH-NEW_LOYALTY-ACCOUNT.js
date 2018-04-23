@@ -52,8 +52,8 @@ params = {
 function main() {
     return join(
 	Events({
-            from_date: formatDate(params.daysago1),
-            to_date:   formatDate(params.daysago15),
+            from_date: formatDate(params.daysago15),
+            to_date:   formatDate(params.daysago1),
             event_selectors: [{
                 event: params.event
 	    }]
@@ -66,8 +66,7 @@ function main() {
         })
         .filter(function(tuple) {
             var trans_date = new Date(tuple.event.properties["Transaction date time"]);
-            return (formatDate(trans_date) >= formatDate(params.daysago1) || 
-		    formatDate(trans_date) <= formatDate(params.daysago15)) &&
+            return formatDate(trans_date) >= formatDate(params.daysago15) &&
 		tuple.user.properties["Consumer created"] >= params.daysago31;
 	})
 	.groupByUser([function(u) { return u.event.properties["Place name"]}
@@ -80,12 +79,13 @@ function main() {
 	.map(function(kv) {
 	    var start_metric = 0;
 	    var end_metric = 0;
-	    if (kv.key[4] >= formatDate(params.daysago1) && kv.key[4] <= formatDate(params.daysago8)) {
+	    if (kv.key[4] > formatDate(params.daysago8)) {
 		end_metric = kv.value;
 	    } else {
 		start_metric = kv.value;
 	    }
 	    return {
+	  date : kv.key[4],
 		store : kv.key[0],
 		market : kv.key[1],
 		division : kv.key[2],
