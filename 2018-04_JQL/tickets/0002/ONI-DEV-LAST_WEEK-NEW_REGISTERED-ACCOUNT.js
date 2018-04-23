@@ -67,7 +67,7 @@ function main() {
 		      , function(u) { return u.event.properties["Place market"]}
 		      , function(u) { return u.event.properties["Place division"]}
 		      , function(u) { return u.event.properties["Place region"]}], mixpanel.reducer.count())
-    .groupBy([mixpanel.slice("key", 1)],mixpanel.reducer.sum('value'))
+    .groupBy(["key.1","key.2","key.3","key.4","key.5"],mixpanel.reducer.sum('value'))
     .map(function(kv) {
       return {
           store : kv.key[0],
