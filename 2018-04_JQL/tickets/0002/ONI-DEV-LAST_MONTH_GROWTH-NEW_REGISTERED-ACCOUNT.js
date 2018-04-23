@@ -8,6 +8,7 @@ var daysago30 = new Date();
 var daysago31 = new Date();
 var daysago37 = new Date();
 var daysago38 = new Date();
+var daysago61 = new Date();
 daysago1.setDate(daysago1.getDate()-1);
 daysago7.setDate(daysago7.getDate()-7);
 daysago8.setDate(daysago8.getDate()-8);
@@ -17,6 +18,7 @@ daysago30.setDate(daysago30.getDate()-30);
 daysago31.setDate(daysago31.getDate()-31);
 daysago37.setDate(daysago37.getDate()-37);
 daysago38.setDate(daysago38.getDate()-38);
+daysago61.setDate(daysago61.getDate()-61);
 
 function roundToTwo(num) {    
     return +(Math.round(num + "e+2")  + "e-2");
@@ -46,13 +48,14 @@ params = {
     'daysago30' : daysago30,
     'daysago31' : daysago31,
     'daysago37' : daysago37,
-    'daysago38' : daysago38
+    'daysago38' : daysago38,
+    'daysago61' : daysago61
 }
 
 function main() {
     return join(
 	Events({
-            from_date: formatDate(params.daysago31),
+            from_date: formatDate(params.daysago61),
             to_date:   formatDate(params.daysago1),
             event_selectors: [{
                 event: params.event
@@ -66,7 +69,7 @@ function main() {
         })
         .filter(function(tuple) {
             var trans_date = new Date(tuple.event.properties["Transaction date time"]);
-            return formatDate(trans_date) >= formatDate(params.daysago31) &&
+            return formatDate(trans_date) >= formatDate(params.daysago61) &&
 		typeof tuple.user.properties["Consumer token: APID"] == "undefined";
 	})
 	.groupByUser([function(u) { return u.event.properties["Place name"]}
@@ -79,7 +82,7 @@ function main() {
 	.map(function(kv) {
 	    var start_metric = 0;
 	    var end_metric = 0;
-	    if (kv.key[4] > formatDate(params.daysago15)) {
+	    if (kv.key[4] > formatDate(params.daysago30)) {
 		end_metric = kv.value;
 	    } else {
 		start_metric = kv.value;
