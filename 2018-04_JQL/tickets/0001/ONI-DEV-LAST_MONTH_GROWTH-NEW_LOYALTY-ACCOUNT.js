@@ -52,7 +52,7 @@ params = {
 function main() {
     return join(
 	Events({
-            from_date: formatDate(params.daysago15),
+            from_date: formatDate(params.daysago31),
             to_date:   formatDate(params.daysago1),
             event_selectors: [{
                 event: params.event
@@ -66,8 +66,8 @@ function main() {
         })
         .filter(function(tuple) {
             var trans_date = new Date(tuple.event.properties["Transaction date time"]);
-            return formatDate(trans_date) >= formatDate(params.daysago15) &&
-		typeof tuple.user.properties["Consumer token: APID"] == "undefined";
+            return formatDate(trans_date) >= formatDate(params.daysago31) &&
+		tuple.user.properties["Consumer created"] >= params.daysago31;
 	})
 	.groupByUser([function(u) { return u.event.properties["Place name"]}
 		      , function(u) { return u.event.properties["Place market"]}
@@ -79,7 +79,7 @@ function main() {
 	.map(function(kv) {
 	    var start_metric = 0;
 	    var end_metric = 0;
-	    if (kv.key[4] > formatDate(params.daysago8)) {
+	    if (kv.key[4] > formatDate(params.daysago15)) {
 		end_metric = kv.value;
 	    } else {
 		start_metric = kv.value;
@@ -90,11 +90,11 @@ function main() {
 		market : kv.key[1],
 		division : kv.key[2],
 		region : kv.key[3],
-		num_of_new_registered_accounts_start: start_metric,
-		num_of_new_registered_accounts_end: end_metric
+		num_of_loyalty_accounts_start: start_metric,
+		num_of_loyalty_accounts_end: end_metric
 	    }
 	})
-	.groupBy(["store","market","division","region"],[mixpanel.reducer.sum('num_of_new_registered_accounts_start'),mixpanel.reducer.sum('num_of_new_registered_accounts_end')])
+	.groupBy(["store","market","division","region"],[mixpanel.reducer.sum('num_of_loyalty_accounts_start'),mixpanel.reducer.sum('num_of_loyalty_accounts_end')])
 	.map(function(keysvalues) {
 	    var growth = 100;
 	    if (keysvalues.value[0] > 0) {
@@ -105,7 +105,7 @@ function main() {
 		market : keysvalues.key[1],
 		division : keysvalues.key[2],
 		region : keysvalues.key[3],
-		growth_rate_of_new_registered_accounts: roundToTwo(growth)
+		growth_rate_of_loyalty_accounts: roundToTwo(growth)
 	    }
 	})
 }

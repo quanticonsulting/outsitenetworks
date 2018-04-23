@@ -74,8 +74,8 @@ function main() {
 	  market : kv.key[1],
 	  division : kv.key[2],
 	  region : kv.key[3],
-        num_of_loyalty_accounts: kv.value
+        num_of_new_registered_accounts: kv.value
       }
     })
-    .sortDesc('num_of_loyalty_accounts')
+    .sortDesc('num_of_new_registered_accounts')
 }

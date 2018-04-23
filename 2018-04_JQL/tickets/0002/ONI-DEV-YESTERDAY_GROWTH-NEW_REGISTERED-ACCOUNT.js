@@ -85,19 +85,17 @@ function main() {
 	    } else {
 		start_metric = kv.value;
 	    }
-	    
-	    
 	    return {
 		store : kv.key[0],
 		market : kv.key[1],
 		division : kv.key[2],
 		region : kv.key[3],
-		num_of_loyalty_accounts_start: start_metric,
-		num_of_loyalty_accounts_end: end_metric
+		num_of_new_registered_accounts_start: start_metric,
+		num_of_new_registered_accounts_end: end_metric
 	    }
 	})
 	.groupBy(["store","market","division","region"],
-		 [mixpanel.reducer.sum('num_of_loyalty_accounts_start'),mixpanel.reducer.sum('num_of_loyalty_accounts_end')])
+		 [mixpanel.reducer.sum('num_of_new_registered_accounts_start'),mixpanel.reducer.sum('num_of_new_registered_accounts_end')])
 	.map(function(keysvalues) {
 	    var growth = 100;
 	    if (keysvalues.value[0] > 0) {
@@ -108,7 +106,7 @@ function main() {
 		market : keysvalues.key[1],
 		division : keysvalues.key[2],
 		region : keysvalues.key[3],
-		growth_rate_of_loyalty_accounts: roundToTwo(growth)
+		growth_rate_of_new_registered_accounts: roundToTwo(growth)
 	    }
 	})
 }
